@@ -21,7 +21,7 @@ namespace NimbusMergerLibrary.Mergers
         public AircraftViewerDataTableMerger(UAsset gameAsset)
         {
             _gameAsset = gameAsset;
-            _dataTablePath = "Nimbus\\Content\\Blueprint\\Information\\AircraftViewerDataTable.uasset";
+            _dataTablePath = "\\Nimbus\\Content\\Blueprint\\Information\\AircraftViewerDataTable.uasset";
 
             DataTableExport dataTable = (DataTableExport)gameAsset.Exports[0];
             UDataTable gameTable = dataTable.Table;

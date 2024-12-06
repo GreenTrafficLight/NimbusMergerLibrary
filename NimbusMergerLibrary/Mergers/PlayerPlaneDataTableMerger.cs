@@ -44,7 +44,7 @@ namespace NimbusMergerLibrary.Mergers
         public PlayerPlaneDataTableMerger(UAsset gameAsset)
         {
             _gameAsset = gameAsset;
-            _dataTablePath = "Nimbus\\Content\\Blueprint\\Information\\PlayerPlaneDataTable.uasset";
+            _dataTablePath = "\\Nimbus\\Content\\Blueprint\\Information\\PlayerPlaneDataTable.uasset";
 
             DataTableExport dataTable = (DataTableExport)gameAsset.Exports[0];
             UDataTable gameTable = dataTable.Table;

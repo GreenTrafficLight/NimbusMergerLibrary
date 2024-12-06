@@ -22,7 +22,7 @@ namespace NimbusMergerLibrary.Mergers
         public SkinDataTableMerger(UAsset gameAsset)
         {
             _gameAsset = gameAsset;
-            _dataTablePath = "Nimbus\\Content\\Blueprint\\Information\\SkinDataTable.uasset";
+            _dataTablePath = "\\Nimbus\\Content\\Blueprint\\Information\\SkinDataTable.uasset";
 
             DataTableExport dataTable = (DataTableExport)gameAsset.Exports[0];
             UDataTable gameTable = dataTable.Table;

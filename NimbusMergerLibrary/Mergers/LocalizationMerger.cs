@@ -16,7 +16,6 @@ namespace NimbusMergerLibrary.Mergers
             {
                 if (gameMaxStringNumber < parent[key].StringNumber)
                 {
-                    Console.WriteLine(parent[key].Name);
                     if (exportCmn.AddVariable(parent[key].Name, exportCmn.Root))
                     {
                         foreach (char letter in exportDats.Keys)
