@@ -6,4 +6,10 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Modules\Ace7-Localization-Format\Ace7LocalizationFormat\Ace7LocalizationFormat.csproj" />
+    <ProjectReference Include="..\Modules\CUE4Parse\CUE4Parse\CUE4Parse.csproj" />
+    <ProjectReference Include="..\Modules\UAssetAPI\UAssetAPI\UAssetAPI.csproj" />
+  </ItemGroup>
+
 </Project>
