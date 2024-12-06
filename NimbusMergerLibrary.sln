@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.9.34622.214
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NimbusMergerLibrary", "NimbusMergerLibrary\NimbusMergerLibrary.csproj", "{850C7EF8-8FD5-4EAA-AA83-86EF2354009D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NimbusMergerLibrary", "NimbusMergerLibrary\NimbusMergerLibrary.csproj", "{850C7EF8-8FD5-4EAA-AA83-86EF2354009D}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Modules", "Modules", "{8D21285E-E83A-4C9E-A7A8-C48B13DC1796}"
 EndProject
@@ -13,7 +13,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CUE4Parse", "Modules\CUE4Pa
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UAssetAPI", "Modules\UAssetAPI\UAssetAPI\UAssetAPI.csproj", "{178417EC-1177-413E-BE85-C83AECD64279}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NimbusMergerLibrary.Tests", "NimbusMergerLibrary.Tests\NimbusMergerLibrary.Tests.csproj", "{052121E3-31C5-4A4B-BF75-86BB6F85E33E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NimbusMergerLibrary.Tests", "NimbusMergerLibrary.Tests\NimbusMergerLibrary.Tests.csproj", "{052121E3-31C5-4A4B-BF75-86BB6F85E33E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NimbusMergerGUI", "NimbusMergerGUI\NimbusMergerGUI.csproj", "{F3904DB3-F52C-46D1-8C4E-BA9E51E4EB3D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -107,6 +109,22 @@ Global
 		{052121E3-31C5-4A4B-BF75-86BB6F85E33E}.Release|Any CPU.Build.0 = Release|Any CPU
 		{052121E3-31C5-4A4B-BF75-86BB6F85E33E}.Release|x86.ActiveCfg = Release|Any CPU
 		{052121E3-31C5-4A4B-BF75-86BB6F85E33E}.Release|x86.Build.0 = Release|Any CPU
+		{F3904DB3-F52C-46D1-8C4E-BA9E51E4EB3D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F3904DB3-F52C-46D1-8C4E-BA9E51E4EB3D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F3904DB3-F52C-46D1-8C4E-BA9E51E4EB3D}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{F3904DB3-F52C-46D1-8C4E-BA9E51E4EB3D}.Debug|x86.Build.0 = Debug|Any CPU
+		{F3904DB3-F52C-46D1-8C4E-BA9E51E4EB3D}.DebugTracing|Any CPU.ActiveCfg = Debug|Any CPU
+		{F3904DB3-F52C-46D1-8C4E-BA9E51E4EB3D}.DebugTracing|Any CPU.Build.0 = Debug|Any CPU
+		{F3904DB3-F52C-46D1-8C4E-BA9E51E4EB3D}.DebugTracing|x86.ActiveCfg = Debug|Any CPU
+		{F3904DB3-F52C-46D1-8C4E-BA9E51E4EB3D}.DebugTracing|x86.Build.0 = Debug|Any CPU
+		{F3904DB3-F52C-46D1-8C4E-BA9E51E4EB3D}.DebugVerbose|Any CPU.ActiveCfg = Debug|Any CPU
+		{F3904DB3-F52C-46D1-8C4E-BA9E51E4EB3D}.DebugVerbose|Any CPU.Build.0 = Debug|Any CPU
+		{F3904DB3-F52C-46D1-8C4E-BA9E51E4EB3D}.DebugVerbose|x86.ActiveCfg = Debug|Any CPU
+		{F3904DB3-F52C-46D1-8C4E-BA9E51E4EB3D}.DebugVerbose|x86.Build.0 = Debug|Any CPU
+		{F3904DB3-F52C-46D1-8C4E-BA9E51E4EB3D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F3904DB3-F52C-46D1-8C4E-BA9E51E4EB3D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F3904DB3-F52C-46D1-8C4E-BA9E51E4EB3D}.Release|x86.ActiveCfg = Release|Any CPU
+		{F3904DB3-F52C-46D1-8C4E-BA9E51E4EB3D}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

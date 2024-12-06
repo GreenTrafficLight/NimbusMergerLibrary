@@ -100,10 +100,10 @@ namespace NimbusMergerLibrary.Mergers
 
         public void WriteMergedLocalization(string path)
         {
-            _gameCmn.Write(path + "Nimbus\\Content\\Localization\\Game\\Cmn.dat");
+            _gameCmn.Write(path + "\\Nimbus\\Content\\Localization\\Game\\Cmn.dat");
             foreach (DatFile gameDat in _gameDats.Values)
             {
-                gameDat.Write(path + "Nimbus\\Content\\Localization\\Game\\");
+                gameDat.Write(path + "\\Nimbus\\Content\\Localization\\Game\\");
             }
         }
 
