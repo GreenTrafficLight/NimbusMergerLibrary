@@ -51,7 +51,7 @@ namespace NimbusMergerLibrary.Mergers
             _gameDats = _gameProvider.GetLocalizations();
 
             // Initialize mergers
-            _playerPlaneDataTableMerger = new PlayerPlaneDataTableMerger(gamePlayerPlaneDataTable);
+            _playerPlaneDataTableMerger = new PlayerPlaneDataTableMerger(gamePlayerPlaneDataTable, _gameCmn, _gameDats['A']);
             _skinDataTableMerger = new SkinDataTableMerger(gameSkinDataTable);
             _aircraftViewerDataTableMerger = new AircraftViewerDataTableMerger(gameAircraftViewerDataTable);
 
