@@ -21,6 +21,7 @@ namespace NimbusMergerLibrary.Tests
 
             nimbusMerger.WriteMergedLocalization(exportPath);
             nimbusMerger.WriteMergedDataTables(exportPath);
+            nimbusMerger.WritePak(Directory.GetCurrentDirectory() + "\\" + "UnrealPak-Batch-No-Compression.bat", exportPath);
 
             watch.Stop();
             Console.WriteLine($"Completed in {watch.ElapsedMilliseconds} ms");
