@@ -11,13 +11,23 @@ using System.Numerics;
 
 namespace NimbusMergerLibrary.Mergers
 {
+    public class PlaneSkinDictionary
+    {
+        public List<int> SkinIDs = new List<int>();
+        public List<int> SkinNo = new List<int>();
+
+        public PlaneSkinDictionary() { }
+    }
+
     public class SkinDataTableMerger : DataTableMerger
     {
+        private readonly List<int> _defaultSkinsNo = new List<int> { 0, 1, 2, 3, 4, 5 };
+
         private List<int> _gameSkinIds = new List<int>();
         private List<int> _exportSkinIds;
 
         private int _skindId = 101;      
-        private Dictionary<string, List<int>> _planeSkinIds = new Dictionary<string, List<int>>();
+        private Dictionary<string, PlaneSkinDictionary> _planeSkinDictionary = new Dictionary<string, PlaneSkinDictionary>();
 
         public SkinDataTableMerger(UAsset gameAsset)
         {
@@ -32,12 +42,14 @@ namespace NimbusMergerLibrary.Mergers
             foreach (StructPropertyData data in gameDatas)
             {
                 IntPropertyData skinId = (IntPropertyData)data["SkinID"];
+                IntPropertyData skinNo = (IntPropertyData)data["SkinNo"];
                 StrPropertyData planeStringId = (StrPropertyData)data["PlaneStringID"];
                 
-                if (!_planeSkinIds.ContainsKey(planeStringId.ToString())){
-                    _planeSkinIds.Add(planeStringId.ToString(), new List<int>());
+                if (!_planeSkinDictionary.ContainsKey(planeStringId.ToString())){
+                    _planeSkinDictionary.Add(planeStringId.ToString(), new PlaneSkinDictionary());
                 }
-                _planeSkinIds[planeStringId.ToString()].Add(skinId.Value);
+                _planeSkinDictionary[planeStringId.ToString()].SkinIDs.Add(skinId.Value);
+                _planeSkinDictionary[planeStringId.ToString()].SkinNo.Add(skinNo.Value);
 
                 _gameSkinIds.Add(skinId.Value);
                 if (_gameSkinIds.Contains(_skindId)) {
@@ -72,15 +84,16 @@ namespace NimbusMergerLibrary.Mergers
                 StrPropertyData planeStringId = (StrPropertyData)modData["PlaneStringID"];
 
                 // If the new plane hasn't been added
-                if (!_planeSkinIds.ContainsKey(planeStringId.ToString()))
+                if (!_planeSkinDictionary.ContainsKey(planeStringId.ToString()))
                 {
-                    _planeSkinIds.Add(planeStringId.ToString(), new List<int>());
+                    _planeSkinDictionary.Add(planeStringId.ToString(), new PlaneSkinDictionary());
 
-                    skinNo.Value = 0; // The first skin
+                    skinNo.Value = _defaultSkinsNo.Contains(skinNo.Value) ? skinNo.Value : 6;
                     skinId.Value = _skindId;
                     sortNumber.Value = skinId.Value;
 
-                    _planeSkinIds[planeStringId.ToString()].Add(skinId.Value);
+                    _planeSkinDictionary[planeStringId.ToString()].SkinIDs.Add(skinId.Value);
+                    _planeSkinDictionary[planeStringId.ToString()].SkinNo.Add(skinNo.Value);
                     _exportSkinIds.Add(skinId.Value);
 
                     modData.Name.Number = skinId.Value + 1; // Change row name
@@ -90,11 +103,18 @@ namespace NimbusMergerLibrary.Mergers
                 }
                 else if (!_gameSkinIds.Contains(skinId.Value))
                 {
-                    skinNo.Value = _planeSkinIds[planeStringId.ToString()].Count();
-                    skinId.Value = _planeSkinIds[planeStringId.ToString()].Last() + 1;
+                    if (_defaultSkinsNo.Contains(skinNo.Value) 
+                        && _planeSkinDictionary[planeStringId.ToString()].SkinNo.Contains(skinNo.Value))
+                    {
+                        continue;
+                    }
+
+                    skinNo.Value = _defaultSkinsNo.Contains(skinNo.Value) ? skinNo.Value : 6 + skinNo.Value - 6;
+                    skinId.Value = _planeSkinDictionary[planeStringId.ToString()].SkinIDs.Last() + 1;
                     sortNumber.Value = skinId.Value;
 
-                    _planeSkinIds[planeStringId.ToString()].Add(skinId.Value);
+                    _planeSkinDictionary[planeStringId.ToString()].SkinIDs.Add(skinId.Value);
+                    _planeSkinDictionary[planeStringId.ToString()].SkinNo.Add(skinNo.Value);
                     _exportSkinIds.Add(skinId.Value);
 
                     modData.Name.Number = skinId.Value + 1; // Change row name
