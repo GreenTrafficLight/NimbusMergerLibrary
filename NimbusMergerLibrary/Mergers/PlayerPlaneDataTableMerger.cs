@@ -81,35 +81,6 @@ namespace NimbusMergerLibrary.Mergers
             _exportSortNumbers.Add(41);
             _exportPlaneIDs = new List<int>(_gamePlaneIDs);
         }
-
-
-        private void CopyRow(StructPropertyData copiedRow, StructPropertyData outputRow)
-        {
-            foreach (PropertyData column in copiedRow.Value)
-            {
-                string columnName = column.Name.ToString();
-
-                outputRow[columnName] = copiedRow[columnName];
-                switch (column.PropertyType.ToString())
-                {
-                    case "ByteProperty":
-                        DataTableUtils.FixPropertyReference((BytePropertyData)outputRow[columnName], _gameAsset);
-                        break;
-
-                    case "EnumProperty":
-                        DataTableUtils.FixPropertyReference((EnumPropertyData)outputRow[columnName], _gameAsset);
-                        break;
-
-                    case "StructProperty":
-                        DataTableUtils.FixPropertyReference((StructPropertyData)outputRow[columnName], _gameAsset);
-                        break;
-
-                    default:
-                        break;
-                }
-            }
-        }
-
         private void Sort()
         {
             DataTableExport dataTable = (DataTableExport)_gameAsset.Exports[0];

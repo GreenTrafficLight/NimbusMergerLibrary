@@ -57,7 +57,6 @@ namespace NimbusMergerLibrary.Mergers
             DataTableExport dataTable = (DataTableExport)_gameAsset.Exports[0];
             UDataTable gameTable = dataTable.Table;
             List<StructPropertyData> gameDatas = gameTable.Data;
-            var gameNameMap = _gameAsset.GetNameMapIndexList();
 
             DataTableExport modDataTable = (DataTableExport)modAsset.Exports[0];
             UDataTable modTable = modDataTable.Table;
@@ -99,6 +98,7 @@ namespace NimbusMergerLibrary.Mergers
                     _exportSkinIds.Add(skinId.Value);
 
                     modData.Name.Number = skinId.Value + 1; // Change row name
+
                     gameDatas.Add(modData);
                 }
             }

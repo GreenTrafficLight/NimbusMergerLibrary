@@ -54,6 +54,7 @@ namespace NimbusMergerLibrary.Mergers
             _exportAircraftViewerIDs.Add(_addAircraftViewerID); // Add the PlaneID to the list so it can't be re-used again
 
             modData.Name.Number = aircraftViewerID.Value + 1; // Change row name
+            
             gameDatas.Add(modData); // Add the table
         }
 
@@ -62,7 +63,6 @@ namespace NimbusMergerLibrary.Mergers
             DataTableExport dataTable = (DataTableExport)_gameAsset.Exports[0];
             UDataTable gameTable = dataTable.Table;
             List<StructPropertyData> gameDatas = gameTable.Data;
-            var gameNameMap = _gameAsset.GetNameMapIndexList();
 
             DataTableExport modDataTable = (DataTableExport)modAsset.Exports[0];
             UDataTable modTable = modDataTable.Table;

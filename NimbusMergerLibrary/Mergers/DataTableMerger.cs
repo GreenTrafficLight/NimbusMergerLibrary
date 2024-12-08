@@ -1,9 +1,12 @@
-﻿using System;
+﻿using NimbusMergerLibrary.Utils;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UAssetAPI;
+using UAssetAPI.PropertyTypes.Objects;
+using UAssetAPI.PropertyTypes.Structs;
 
 namespace NimbusMergerLibrary.Mergers
 {
@@ -21,6 +24,33 @@ namespace NimbusMergerLibrary.Mergers
                 Directory.CreateDirectory(directoryPath);
             }
             _gameAsset.Write(exportFilePath);
+        }
+
+        protected void CopyRow(StructPropertyData copiedRow, StructPropertyData outputRow)
+        {
+            foreach (PropertyData column in copiedRow.Value)
+            {
+                string columnName = column.Name.ToString();
+
+                outputRow[columnName] = copiedRow[columnName];
+                switch (column.PropertyType.ToString())
+                {
+                    case "ByteProperty":
+                        DataTableUtils.FixPropertyReference((BytePropertyData)outputRow[columnName], _gameAsset);
+                        break;
+
+                    case "EnumProperty":
+                        DataTableUtils.FixPropertyReference((EnumPropertyData)outputRow[columnName], _gameAsset);
+                        break;
+
+                    case "StructProperty":
+                        DataTableUtils.FixPropertyReference((StructPropertyData)outputRow[columnName], _gameAsset);
+                        break;
+
+                    default:
+                        break;
+                }
+            }
         }
     }
 }
