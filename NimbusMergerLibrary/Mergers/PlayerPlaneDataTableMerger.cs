@@ -1,6 +1,7 @@
 ﻿using Ace7LocalizationFormat.Formats;
 using CUE4Parse.FileProvider.Objects;
 using CUE4Parse.UE4.Assets.Objects.Properties;
+using NimbusMergerLibrary.FileProvider;
 using NimbusMergerLibrary.Utils;
 using System;
 using System.Collections.Generic;

@@ -3,6 +3,7 @@ using CUE4Parse.Compression;
 using CUE4Parse.Encryption.Aes;
 using CUE4Parse.UE4.Pak;
 using CUE4Parse.UE4.Versions;
+using NimbusMergerLibrary.FileProvider;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
