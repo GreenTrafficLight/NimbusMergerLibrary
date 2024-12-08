@@ -5,6 +5,7 @@ using CUE4Parse.UE4.Pak;
 using CUE4Parse.UE4.Versions;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -23,6 +24,7 @@ namespace NimbusMergerLibrary.Mergers
         private PlayerPlaneDataTableMerger _playerPlaneDataTableMerger;
         private SkinDataTableMerger _skinDataTableMerger;
         private AircraftViewerDataTableMerger _aircraftViewerDataTableMerger;
+        private PlayerWeaponDataTableMerger _playerWeaponDataTableMerger;
 
         private CmnFile _gameCmn;
         private Dictionary<char, DatFile> _gameDats = new Dictionary<char, DatFile>();
@@ -46,6 +48,7 @@ namespace NimbusMergerLibrary.Mergers
             var gamePlayerPlaneDataTable = _gameProvider.GetUasset("Nimbus/Content/Blueprint/Information/PlayerPlaneDataTable.uasset", true);
             var gameSkinDataTable = _gameProvider.GetUasset("Nimbus/Content/Blueprint/Information/SkinDataTable.uasset", true);
             var gameAircraftViewerDataTable = _gameProvider.GetUasset("Nimbus/Content/Blueprint/Information/AircraftViewerDataTable.uasset", true);
+            var gamePlayerWeaponDataTable = _gameProvider.GetUasset("Nimbus/Content/Blueprint/Information/PlayerWeaponDataTable.uasset", true);
 
             _gameCmn = _gameProvider.GetCmn();
             _gameDats = _gameProvider.GetLocalizations();
@@ -54,6 +57,7 @@ namespace NimbusMergerLibrary.Mergers
             _playerPlaneDataTableMerger = new PlayerPlaneDataTableMerger(gamePlayerPlaneDataTable, _gameCmn, _gameDats['A']);
             _skinDataTableMerger = new SkinDataTableMerger(gameSkinDataTable);
             _aircraftViewerDataTableMerger = new AircraftViewerDataTableMerger(gameAircraftViewerDataTable);
+            _playerWeaponDataTableMerger = new PlayerWeaponDataTableMerger(gamePlayerWeaponDataTable);
 
             // Initialize Mod Provider
             _modProvider = new NimbusFileProvider(_modArchivePath, SearchOption.AllDirectories, true, new VersionContainer(EGame.GAME_UE4_18));
@@ -95,6 +99,11 @@ namespace NimbusMergerLibrary.Mergers
                 {
                     _aircraftViewerDataTableMerger.Merge(modAircraftViewerDataTable);
                 }
+
+                if (NimbusPakFileReader.TryGetUAsset(pak, "Nimbus/Content/Blueprint/Information/PlayerWeaponDataTable.uasset", out UAsset modPlayerWeaponDataTable))
+                {
+                    _playerWeaponDataTableMerger.Merge(modPlayerWeaponDataTable);
+                }
             }
         }
 
@@ -112,6 +121,29 @@ namespace NimbusMergerLibrary.Mergers
             _playerPlaneDataTableMerger.Write(path);
             _skinDataTableMerger.Write(path);
             _aircraftViewerDataTableMerger.Write(path);
+            _playerWeaponDataTableMerger.Write(path);
+        }
+
+        public void WritePak(string batFilePath, string path)
+        {
+            // Create and configure the process
+            Process process = new Process
+            {
+                StartInfo = new ProcessStartInfo
+                {
+                    FileName = batFilePath,
+                    Arguments = $"\"{path.TrimEnd('\\')}\"",  // Pass folder path as an argument
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    UseShellExecute = false,
+                    CreateNoWindow = true
+                }
+            };
+
+            // Start the process
+            process.Start();
+            // Wait for the batch file to finish
+            process.WaitForExit();
         }
     }
 }
