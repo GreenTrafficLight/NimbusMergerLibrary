@@ -10,7 +10,16 @@ namespace NimbusMergerLibrary.Tests
 
             string gameArchivePath = "E:\\Program Files (x86)\\Steam\\steamapps\\common\\ACE COMBAT 7\\Game\\Content\\Paks";
             string modArchivePath = "E:\\Program Files (x86)\\Steam\\steamapps\\common\\ACE COMBAT 7\\Game\\Content\\Paks\\~mods";
-            string exportPath = "E:\\MODDING\\_Ace Combat 7\\_testForMerger\\~~~~~~~MERGER_TEST_P\\";
+            string exportPath = "E:\\MODDING\\_Ace Combat 7\\_testForMerger";
+
+            var filenames = Directory.GetFiles(exportPath)
+                      .Select(Path.GetFileName); // Extract filenames only
+
+            int tildeCount = filenames.OrderByDescending(f => f)
+                .LastOrDefault()
+                .Count(c => c == '~');
+
+            exportPath += "\\" + new string('~', tildeCount) + "export_P";
 
             NimbusMerger nimbusMerger = new NimbusMerger(gameArchivePath, modArchivePath);
 
