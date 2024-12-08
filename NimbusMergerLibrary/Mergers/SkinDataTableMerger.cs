@@ -23,8 +23,8 @@ namespace NimbusMergerLibrary.Mergers
     {
         private readonly List<int> _defaultSkinsNo = new List<int> { 0, 1, 2, 3, 4, 5 };
 
-        private List<int> _gameSkinIds = new List<int>();
-        private List<int> _exportSkinIds;
+        private HashSet<int> _gameSkinIds = new HashSet<int>();
+        private HashSet<int> _exportSkinIds;
 
         private int _skindId = 101;      
         private Dictionary<string, PlaneSkinDictionary> _planeSkinDictionary = new Dictionary<string, PlaneSkinDictionary>();
@@ -57,7 +57,7 @@ namespace NimbusMergerLibrary.Mergers
                 }
             }
 
-            _exportSkinIds = new List<int>(_gameSkinIds);
+            _exportSkinIds = new HashSet<int>(_gameSkinIds);
         }
 
         private void AddRow(StructPropertyData modData, List<StructPropertyData> gameDatas)

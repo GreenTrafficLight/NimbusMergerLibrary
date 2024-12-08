@@ -15,9 +15,9 @@ namespace NimbusMergerLibrary.Mergers
     public class PlayerWeaponDataTableMerger : DataTableMerger
     {
         /// <summary>The plane IDs belonging to the game asset. Used to see if there is a new plane added</summary>
-        private List<int> _gameWeaponIDs = new List<int>();
+        private HashSet<int> _gameWeaponIDs = new HashSet<int>();
         /// <summary>The plane IDs belonging to the asset that is going to be created.</summary>
-        private List<int> _exportWeaponIDs;
+        private HashSet<int> _exportWeaponIDs;
 
         private int _addWeaponID = 0;
 
@@ -48,7 +48,7 @@ namespace NimbusMergerLibrary.Mergers
                 }
             }
 
-            _exportWeaponIDs = new List<int>(_gameWeaponIDs);
+            _exportWeaponIDs = new HashSet<int>(_gameWeaponIDs);
         }
 
         public void Merge(UAsset modAsset)

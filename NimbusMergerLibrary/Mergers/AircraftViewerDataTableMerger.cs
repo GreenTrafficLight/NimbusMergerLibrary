@@ -13,8 +13,8 @@ namespace NimbusMergerLibrary.Mergers
 {
     public class AircraftViewerDataTableMerger : DataTableMerger
     {
-        private List<int> _gameAircraftViewerIDs = new List<int>();
-        private List<int> _exportAircraftViewerIDs;
+        private HashSet<int> _gameAircraftViewerIDs = new HashSet<int>();
+        private HashSet<int> _exportAircraftViewerIDs;
 
         private int _addAircraftViewerID = 1; // The mininum plane ID found the PlayerPlaneDataTable
 
@@ -37,7 +37,7 @@ namespace NimbusMergerLibrary.Mergers
                 }
             }
 
-            _exportAircraftViewerIDs = new List<int>(_gameAircraftViewerIDs);
+            _exportAircraftViewerIDs = new HashSet<int>(_gameAircraftViewerIDs);
         }
 
         public void AddRow(StructPropertyData modData, List<StructPropertyData> gameDatas)
