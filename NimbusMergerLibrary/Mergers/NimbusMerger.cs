@@ -30,6 +30,13 @@ namespace NimbusMergerLibrary.Mergers
         private CmnFile _gameCmn;
         private Dictionary<char, DatFile> _gameDats = new Dictionary<char, DatFile>();
 
+        private int _tildeCount = -1;
+        public int TildeCount
+        {
+            get { return _tildeCount + 1; }
+            set { _tildeCount = value; }
+        }
+
         public NimbusMerger(string gameArchivePath, string modArchivePath)
         {
             _gameArchivePath = gameArchivePath;
@@ -64,6 +71,15 @@ namespace NimbusMergerLibrary.Mergers
             _modProvider = new NimbusFileProvider(_modArchivePath, SearchOption.AllDirectories, true, new VersionContainer(EGame.GAME_UE4_18));
             _modProvider.Initialize();
             _modProvider.SubmitKey(new(0U), new FAesKey("0000000000000000000000000000000000000000000000000000000000000000"));
+
+            var names = Directory.GetDirectories(_modArchivePath).Select(Path.GetFileName);
+
+            if (names.Any())
+            {
+                TildeCount = names.OrderByDescending(f => f)
+                    .LastOrDefault()
+                    .Count(c => c == '~');
+            }
         }
 
         public void MergeLocalization()
@@ -149,6 +165,10 @@ namespace NimbusMergerLibrary.Mergers
             process.Start();
             // Wait for the batch file to finish
             process.WaitForExit();
+
+#if !DEBUG
+            Directory.Delete(path);
+#endif
         }
     }
 }
