@@ -68,9 +68,11 @@ namespace NimbusMergerLibrary.Mergers
 
         public void MergeLocalization()
         {
+            var sorted = _modProvider.MountedVfs.OrderBy(x => x.Name).ToList();
+
             var gameMaxStringNumber = _gameCmn.MaxStringNumber;
 
-            foreach (PakFileReader pak in _modProvider.MountedVfs.OrderBy(x => x.Name).ToList())
+            foreach (PakFileReader pak in sorted)
             {
                 var modCmn = NimbusPakFileReader.GetCmn(pak);
                 var modDats = NimbusPakFileReader.GetLocalizations(pak);
@@ -84,7 +86,9 @@ namespace NimbusMergerLibrary.Mergers
 
         public void MergeDataTables() 
         {
-            foreach (PakFileReader pak in _modProvider.MountedVfs.OrderBy(x => x.Name).ToList())
+            var sorted = _modProvider.MountedVfs.OrderBy(x => x.Name).ToList();
+
+            foreach (PakFileReader pak in sorted)
             {
                 if (NimbusPakFileReader.TryGetUAsset(pak, "Nimbus/Content/Blueprint/Information/PlayerPlaneDataTable.uasset", out UAsset modPlayerPlaneDataTable))
                 {
@@ -93,7 +97,7 @@ namespace NimbusMergerLibrary.Mergers
 
                 if (NimbusPakFileReader.TryGetUAsset(pak, "Nimbus/Content/Blueprint/Information/SkinDataTable.uasset", out UAsset modSkinDataTable))
                 {
-                    _skinDataTableMerger.Merge(modSkinDataTable);
+                    _skinDataTableMerger.Merge(_modProvider, modSkinDataTable);
                 }
 
                 if (NimbusPakFileReader.TryGetUAsset(pak, "Nimbus/Content/Blueprint/Information/AircraftViewerDataTable.uasset", out UAsset modAircraftViewerDataTable))
