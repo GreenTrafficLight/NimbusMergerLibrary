@@ -46,16 +46,20 @@ namespace NimbusMergerLibrary.Mergers
                 {
                     _addWeaponID++;
                 }
+
+                RowNames.Add(data.Name.ToString());
             }
 
             _exportWeaponIDs = new HashSet<int>(_gameWeaponIDs);
+
+            
         }
 
         public void Merge(UAsset modAsset)
         {
             DataTableExport dataTable = (DataTableExport)_gameAsset.Exports[0];
             UDataTable gameTable = dataTable.Table;
-            List<StructPropertyData> gameDatas = gameTable.Data;
+            List<StructPropertyData> gameRows = gameTable.Data;
 
             DataTableExport modDataTable = (DataTableExport)modAsset.Exports[0];
             UDataTable modTable = modDataTable.Table;
@@ -63,9 +67,9 @@ namespace NimbusMergerLibrary.Mergers
 
             for (int i = 0; i < modDatas.Count; i++)
             {
-                StructPropertyData modData = modDatas[i];
+                StructPropertyData modRow = modDatas[i];
 
-                IntPropertyData weaponID = (IntPropertyData)modData["WeaponID"];
+                IntPropertyData weaponID = (IntPropertyData)modRow["WeaponID"];
 
                 if (!_gameWeaponIDs.Contains(weaponID.Value))
                 {
@@ -80,10 +84,10 @@ namespace NimbusMergerLibrary.Mergers
 
                     // Copy the first row of the game asset
                     StructPropertyData outputRow = (StructPropertyData)_rowForCopy.Clone();
-                    CopyRow(modData, outputRow);
-                    outputRow.Name.Number = weaponID.Value + 1; // Change row name
+                    CopyRow(modRow, outputRow);
+                    RenameRow(outputRow); // Change row name
 
-                    gameDatas.Add(outputRow); // Add the table
+                    gameRows.Add(outputRow); // Add the table
                 }
             }
         }
