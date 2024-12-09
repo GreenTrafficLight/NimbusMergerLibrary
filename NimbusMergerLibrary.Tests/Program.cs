@@ -19,7 +19,7 @@ namespace NimbusMergerLibrary.Tests
                 .LastOrDefault()
                 .Count(c => c == '~');
 
-            exportPath += "\\" + new string('~', tildeCount) + "export_P";
+            exportPath += "\\" + new string('~', tildeCount + 1) + "export_P";
 
             NimbusMerger nimbusMerger = new NimbusMerger(gameArchivePath, modArchivePath);
 
