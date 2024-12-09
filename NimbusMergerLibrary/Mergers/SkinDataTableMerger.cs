@@ -121,12 +121,8 @@ namespace NimbusMergerLibrary.Mergers
                 }
                 else if (!_gameSkinIds.Contains(skinId.Value))
                 {
-                    // Check if it's a skin no 1, 2, 3, 4, 5 and if it's already been assigned
-                    if (_defaultSkinsNo.Contains(skinNo.Value) 
-                        && _planeSkinDictionary[planeStringId.ToString()].SkinNo.Contains(skinNo.Value))
-                    {
-                        continue;
-                    }
+                    // Check if it's a skin No that has already been assigned
+                    if (_planeSkinDictionary[planeStringId.ToString()].SkinNo.Contains(skinNo.Value)) continue;
 
                     skinNo.Value = _defaultSkinsNo.Contains(skinNo.Value) ? skinNo.Value : 6 + skinNo.Value - 6;
                     skinId.Value = _planeSkinDictionary[planeStringId.ToString()].SkinIDs.Last() + 1;
