@@ -20,6 +20,20 @@ using UAssetAPI.UnrealTypes;
 
 namespace NimbusMergerLibrary.Mergers
 {
+    public class ReferenceDictionary
+    {
+        public ReferenceDictionary(int planeID, int sortNumber, int rowIndex)
+        {
+            PlaneID = planeID;
+            SortNumber = sortNumber;
+            RowIndex = rowIndex;
+        }
+
+        public int PlaneID { get; set; }
+        public int SortNumber { get; set; }
+        public int RowIndex { get; set; }
+    }
+
     public class PlayerPlaneDataTableMerger : DataTableMerger
     {
         /// <summary>The plane IDs belonging to the game asset. Used to see if there is a new plane added</summary>
@@ -27,16 +41,28 @@ namespace NimbusMergerLibrary.Mergers
         /// <summary>The plane IDs belonging to the asset that is going to be created.</summary>
         private HashSet<int> _exportPlaneIDs;
         
-        private List<int> _exportSortNumbers = new List<int>();
+        private HashSet<int> _exportSortNumbers = new HashSet<int>();
         private List<string> _planeStrings = new List<string>();
-        private List<string> _planeReferences = new List<string>();
 
-        /// <summary> Take the plane ID as key, and use it for the Sort function.</summary>
+        private HashSet<string> _gamePlaneReferences = new HashSet<string>();
+        /// <summary>
+        /// Dictionary to keep track of the row index for the plane references.
+        /// The key is the plane reference path.
+        /// The value is the row index
+        /// </summary>
+        private Dictionary<string, ReferenceDictionary> _planeReferences = new Dictionary<string, ReferenceDictionary>();
+
+        /// <summary>
+        /// Dictionary to keep track of which plane short name the plane ID has
+        /// The key is the plane ID
+        /// The value is the string of the plane short name
+        /// </summary>
         private Dictionary<int, string> _planeStringsDict = new Dictionary<int, string>();
 
         /// <summary>
-        /// Keep track of plane IDs that has been updated
+        /// Dictionary to keep track of plane IDs that has been updated
         /// And store their old IDs so they can be referenced when it's used in the OriginalPlaneID
+        /// The key is the old plane ID, the value is the new plane ID
         /// </summary>
         private Dictionary<int, int> _updatedIds = new Dictionary<int, int>();
 
@@ -59,31 +85,33 @@ namespace NimbusMergerLibrary.Mergers
 
             _gameRowForCopy = gameDatas[0];
 
-            // Initialize the dictionary
-            foreach (StructPropertyData data in gameDatas)
+            for (int i = 0; i < gameDatas.Count; i++)
             {
+                StructPropertyData data = gameDatas[i];
+
                 // Add the game plane IDs
                 IntPropertyData planeId = (IntPropertyData)data["PlaneID"];
                 _gamePlaneIDs.Add(planeId.Value);
                 // Increment the id for the new plane, so it's doesn't take one that exist
-                if (_gamePlaneIDs.Contains(_addPlaneId)){
-                    _addPlaneId++;
-                }
+                if (_gamePlaneIDs.Contains(_addPlaneId)) _addPlaneId++;
 
                 // Get the reference to the AcePlayerPawn of the plane
                 // Used to see if there any duplicates, if there is, continue the loop
                 SoftObjectPropertyData reference = (SoftObjectPropertyData)data["Reference"];
                 string assetPath = Path.GetFileNameWithoutExtension(reference.Value.AssetPath.AssetName.ToString());
-                _planeReferences.Add(assetPath);
+                _gamePlaneReferences.Add(assetPath);
 
                 // Add the game sort numbers
                 IntPropertyData sortNumber = (IntPropertyData)data["SortNumber"];
                 _exportSortNumbers.Add(sortNumber.Value);
+                //_planeReferencesRowIndex.Add(assetPath,
 
                 // Add the game plane string IDs
                 StrPropertyData planeStringID = (StrPropertyData)data["PlaneStringID"];
                 string planeString = GetPlaneString(planeStringID, cmn, dat);
                 _planeStringsDict.Add(planeId.Value, planeString);
+
+                _planeReferences.Add(assetPath, new ReferenceDictionary(planeId.Value, sortNumber.Value, i));
             }
 
             _exportSortNumbers.Add(41);
@@ -93,11 +121,11 @@ namespace NimbusMergerLibrary.Mergers
         {
             DataTableExport dataTable = (DataTableExport)_gameAsset.Exports[0];
             UDataTable gameTable = dataTable.Table;
-            List<StructPropertyData> gameDatas = gameTable.Data;
+            List<StructPropertyData> gameColumns = gameTable.Data;
 
-            for (int i = 0; i < gameDatas.Count; i++)
+            for (int rowIndex = 0; rowIndex < gameColumns.Count; rowIndex++)
             {
-                StructPropertyData data = gameDatas[i];
+                StructPropertyData data = gameColumns[rowIndex];
 
                 IntPropertyData planeId = (IntPropertyData)data["PlaneID"];
 
@@ -108,45 +136,35 @@ namespace NimbusMergerLibrary.Mergers
             }
         }
 
-        private void AddRow(NimbusFileProvider fileProvider, string planeString, StructPropertyData modData, List<StructPropertyData> gameDatas)
+        private void AddRow(NimbusFileProvider fileProvider, string planeString, StructPropertyData modRow, List<StructPropertyData> gameRows)
         {
-            IntPropertyData planeId = (IntPropertyData)modData["PlaneID"];
-            SoftObjectPropertyData reference = (SoftObjectPropertyData)modData["Reference"];
-            IntPropertyData sortNumber = (IntPropertyData)modData["SortNumber"];
+            IntPropertyData planeId = (IntPropertyData)modRow["PlaneID"];
+            SoftObjectPropertyData reference = (SoftObjectPropertyData)modRow["Reference"];
+            IntPropertyData sortNumber = (IntPropertyData)modRow["SortNumber"];
 
             // Check if the asset exist in the paks
             // Used for mods that have additional plane rows but doesn't have their pawn
             if (!fileProvider.CheckAssetReference(reference))
             {
                 _planeStrings.RemoveAt(_planeStrings.Count - 1);
-                _planeReferences.RemoveAt(_planeReferences.Count - 1);
                 return;
             }
 
             // Update the sort number value until it's one that doesn't exist in the exported asset
-            while (_exportSortNumbers.Contains(_addSortNumber))
-            {
-                _addSortNumber++;
-            }
+            while (_exportSortNumbers.Contains(_addSortNumber)) _addSortNumber++;
 
             // Update the added id value until it's one that doesn't exist in the exported asset
-            while (_exportPlaneIDs.Contains(_addPlaneId))
-            {
-                _addPlaneId++;
-            }
+            while (_exportPlaneIDs.Contains(_addPlaneId)) _addPlaneId++;
 
             // Update the OriginalPlaneID
             _updatedIds.Add(planeId.Value, _addPlaneId); // Add the old planeId to the dict as key, and put the new id value
-            IntPropertyData originalPlaneId = (IntPropertyData)modData["OriginalPlaneID"];
-            if (originalPlaneId.Value != -1)
-            {
-                originalPlaneId.Value = _updatedIds[originalPlaneId.Value];
-            }
+            IntPropertyData originalPlaneId = (IntPropertyData)modRow["OriginalPlaneID"];
+            if (originalPlaneId.Value != -1) originalPlaneId.Value = _updatedIds[originalPlaneId.Value];
 
             planeId.Value = _addPlaneId; // Update the PlaneID
-            _exportPlaneIDs.Add(_addPlaneId); // Add the PlaneID to the list so it can't be re-used again
-            sortNumber.Value = _addSortNumber;
-            _exportSortNumbers.Add(sortNumber.Value);
+            _exportPlaneIDs.Add(_addPlaneId); // Add the PlaneID so it can't be re-used again
+            sortNumber.Value = _addSortNumber; // Update the SortNumber
+            _exportSortNumbers.Add(sortNumber.Value); // Add the SortNumber so it can't be re-used again 
 
             // Add the new asseth path name to the name map
             string assetPathName = reference.Value.AssetPath.AssetName.ToString();
@@ -155,10 +173,13 @@ namespace NimbusMergerLibrary.Mergers
             
             // Copy the first row of the game asset
             StructPropertyData outputRow = (StructPropertyData)_gameRowForCopy.Clone();
-            CopyRow(modData, outputRow);
+            CopyRow(modRow, outputRow);
             outputRow.Name.Number = planeId.Value + 1; // Change row name
-            
-            gameDatas.Add(outputRow); // Add the table
+
+            string assetPath = Path.GetFileNameWithoutExtension(reference.Value.AssetPath.AssetName.ToString());
+            _planeReferences.Add(assetPath, new ReferenceDictionary(planeId.Value, sortNumber.Value, gameRows.Count()));
+
+            gameRows.Add(outputRow); // Add the table
 
             _planeStringsDict.Add(planeId.Value, planeString);
         }
@@ -167,46 +188,55 @@ namespace NimbusMergerLibrary.Mergers
         {
             DataTableExport dataTable = (DataTableExport)_gameAsset.Exports[0];
             UDataTable gameTable = dataTable.Table;
-            List<StructPropertyData> gameDatas = gameTable.Data;
+            List<StructPropertyData> gameRows = gameTable.Data;
 
             DataTableExport modDataTable = (DataTableExport)modAsset.Exports[0];
             UDataTable modTable = modDataTable.Table;
-            List<StructPropertyData> modDatas = modTable.Data;
+            List<StructPropertyData> modRows = modTable.Data;
 
-            for (int i = 0; i < modDatas.Count; i++) 
+            for (int rowIndex = 0; rowIndex < modRows.Count; rowIndex++) 
             {
-                StructPropertyData modData = modDatas[i];
+                StructPropertyData modRow = modRows[rowIndex];
 
                 // Get the reference to the AcePlayerPawn of the plane
                 // Used to see if there any duplicates, if there is, continue the loop
-                SoftObjectPropertyData reference = (SoftObjectPropertyData)modData["Reference"];
+                SoftObjectPropertyData reference = (SoftObjectPropertyData)modRow["Reference"];
                 string assetPath = Path.GetFileNameWithoutExtension(reference.Value.AssetPath.AssetName.ToString());
 
-                StrPropertyData planeStringID = (StrPropertyData)modData["PlaneStringID"];
+                StrPropertyData planeStringID = (StrPropertyData)modRow["PlaneStringID"];
                 string planeString = GetPlaneString(planeStringID, cmn, dat);
 
-                IntPropertyData planeId = (IntPropertyData)modData["PlaneID"];
-                IntPropertyData sortNumber = (IntPropertyData)modData["SortNumber"];
+                IntPropertyData planeId = (IntPropertyData)modRow["PlaneID"];
+                IntPropertyData sortNumber = (IntPropertyData)modRow["SortNumber"];
 
                 // Check if it's a reference that doesn't exist in the original game asset
-                if (!_planeReferences.Contains(assetPath))
+                if (!_planeReferences.ContainsKey(assetPath))
                 {
                     // If it isn't, add the new row
-                    _planeReferences.Add(assetPath);
-                    AddRow(fileProvider, planeString, modData, gameDatas);
+                    AddRow(fileProvider, planeString, modRow, gameRows);
                 }
                 // Modify existing row
                 else
                 {
-                    if (!_exportPlaneIDs.Contains(planeId.Value))
+                    // If the ID of a game existing plane is different
+                    /*if (!_gamePlaneIDs.Contains(planeId.Value) && _gamePlaneReferences.Contains(assetPath))
                     {
-                        if (planeId.Value != 190) _exportPlaneIDs.Remove(planeId.Value);
+                        // Update the added id value until it's one that doesn't exist in the exported asset
+                        while (_exportPlaneIDs.Contains(_addPlaneId)) _addPlaneId++;
+
+                        _planeReferences[assetPath].PlaneID = _addPlaneId;
+                        planeId.Value = _addPlaneId;
+                        _exportPlaneIDs.Add(planeId.Value);
                         _planeStringsDict.Add(planeId.Value, planeString);
                     }
 
                     StructPropertyData outputRow = (StructPropertyData)_gameRowForCopy.Clone();
-                    CopyRow(modData, outputRow);
-                    gameDatas[i] = outputRow;
+                    CopyRow(modRow, outputRow);
+                    IntPropertyData outputPlaneId = (IntPropertyData)outputRow["PlaneID"];
+                    outputPlaneId.Value = _planeReferences[assetPath].PlaneID;
+                    IntPropertyData outputSortNumber = (IntPropertyData)outputRow["SortNumber"];
+                    outputSortNumber.Value = _planeReferences[assetPath].SortNumber;
+                    gameRows[_planeReferences[assetPath].RowIndex] = outputRow;*/
                 }                
             }
 
