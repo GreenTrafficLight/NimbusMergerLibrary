@@ -30,7 +30,7 @@ namespace NimbusMergerLibrary.Mergers
         private CmnFile _gameCmn;
         private Dictionary<char, DatFile> _gameDats = new Dictionary<char, DatFile>();
 
-        private int _tildeCount = -1;
+        private int _tildeCount = 0;
         public int TildeCount
         {
             get { return _tildeCount + 1; }
@@ -72,7 +72,10 @@ namespace NimbusMergerLibrary.Mergers
             _modProvider.Initialize();
             _modProvider.SubmitKey(new(0U), new FAesKey("0000000000000000000000000000000000000000000000000000000000000000"));
 
-            var names = Directory.GetDirectories(_modArchivePath).Select(Path.GetFileName);
+            // Get both folder and files name
+            var names = Directory.GetDirectories(_modArchivePath)
+                .Select(Path.GetFileName)
+                .Concat(Directory.GetFiles(_modArchivePath).Select(Path.GetFileName));
 
             if (names.Any())
             {
