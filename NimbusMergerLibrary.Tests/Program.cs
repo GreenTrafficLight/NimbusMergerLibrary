@@ -12,7 +12,7 @@ namespace NimbusMergerLibrary.Tests
             string modArchivePath = "E:\\Program Files (x86)\\Steam\\steamapps\\common\\ACE COMBAT 7\\Game\\Content\\Paks\\~mods";
             string exportPath = "E:\\MODDING\\_Ace Combat 7\\_testForMerger";
 
-            var filenames = Directory.GetFiles(exportPath)
+            var filenames = Directory.GetFiles(modArchivePath)
                       .Select(Path.GetFileName); // Extract filenames only
 
             int tildeCount = filenames.OrderByDescending(f => f)
