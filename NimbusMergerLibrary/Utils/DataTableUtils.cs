@@ -19,6 +19,7 @@ namespace NimbusMergerLibrary.Utils
 
         public static void FixPropertyReference(EnumPropertyData property, INameMap asset)
         {
+            property.EnumType = new FName(asset, asset.SearchNameReference(property.EnumType.Value));
             property.Value = new FName(asset, asset.SearchNameReference(property.Value.Value));
         }
 
