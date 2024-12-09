@@ -8,15 +8,25 @@ using UAssetAPI.PropertyTypes.Objects;
 using UAssetAPI.PropertyTypes.Structs;
 using UAssetAPI;
 using System.Numerics;
+using CUE4Parse.FileProvider;
+using NimbusMergerLibrary.FileProvider;
+using CUE4Parse.UE4.Assets.Objects.Properties;
 
 namespace NimbusMergerLibrary.Mergers
 {
     public class PlaneSkinDictionary
     {
+        public PlaneSkinDictionary(int rowIndex) 
+        {
+            RowIndex = rowIndex;
+        }
+        
+        public int RowIndex { get; set; }
+        
         public List<int> SkinIDs = new List<int>();
         public List<int> SkinNo = new List<int>();
 
-        public PlaneSkinDictionary() { }
+        
     }
 
     public class SkinDataTableMerger : DataTableMerger
@@ -39,20 +49,24 @@ namespace NimbusMergerLibrary.Mergers
             List<StructPropertyData> gameDatas = gameTable.Data;
 
             // Initialize the dictionary
-            foreach (StructPropertyData data in gameDatas)
+            for (int i = 0; i < gameDatas.Count; i++)
             {
-                IntPropertyData skinId = (IntPropertyData)data["SkinID"];
-                IntPropertyData skinNo = (IntPropertyData)data["SkinNo"];
-                StrPropertyData planeStringId = (StrPropertyData)data["PlaneStringID"];
-                
-                if (!_planeSkinDictionary.ContainsKey(planeStringId.ToString())){
-                    _planeSkinDictionary.Add(planeStringId.ToString(), new PlaneSkinDictionary());
+                StructPropertyData row = gameDatas[i];
+
+                IntPropertyData skinId = (IntPropertyData)row["SkinID"];
+                IntPropertyData skinNo = (IntPropertyData)row["SkinNo"];
+                StrPropertyData planeStringId = (StrPropertyData)row["PlaneStringID"];
+
+                if (!_planeSkinDictionary.ContainsKey(planeStringId.ToString()))
+                {
+                    _planeSkinDictionary.Add(planeStringId.ToString(), new PlaneSkinDictionary(i));
                 }
                 _planeSkinDictionary[planeStringId.ToString()].SkinIDs.Add(skinId.Value);
                 _planeSkinDictionary[planeStringId.ToString()].SkinNo.Add(skinNo.Value);
 
                 _gameSkinIds.Add(skinId.Value);
-                if (_gameSkinIds.Contains(_skindId)) {
+                if (_gameSkinIds.Contains(_skindId))
+                {
                     _skindId += 100;
                 }
             }
@@ -64,7 +78,7 @@ namespace NimbusMergerLibrary.Mergers
         {
         }
 
-        public void Merge(UAsset modAsset)
+        public void Merge(NimbusFileProvider fileProvider, UAsset modAsset)
         {
             DataTableExport dataTable = (DataTableExport)_gameAsset.Exports[0];
             UDataTable gameTable = dataTable.Table;
@@ -82,11 +96,15 @@ namespace NimbusMergerLibrary.Mergers
                 IntPropertyData skinNo = (IntPropertyData)modData["SkinNo"];
                 IntPropertyData sortNumber = (IntPropertyData)modData["SortNumber"];
                 StrPropertyData planeStringId = (StrPropertyData)modData["PlaneStringID"];
+                StrPropertyData planeReference = (StrPropertyData)modData["PlaneReference"];
 
-                // If the new plane hasn't been added
+                // If the new plane hasn't been added in the dictionary
                 if (!_planeSkinDictionary.ContainsKey(planeStringId.ToString()))
                 {
-                    _planeSkinDictionary.Add(planeStringId.ToString(), new PlaneSkinDictionary());
+                    string assetPath = Path.GetDirectoryName(planeReference.Value.ToString()) + "\\" + Path.GetFileNameWithoutExtension(planeReference.Value.ToString()) + ".uasset";
+                    if (!fileProvider.CheckAssetReference(assetPath)) continue;
+
+                    _planeSkinDictionary.Add(planeStringId.ToString(), new PlaneSkinDictionary(i));
 
                     skinNo.Value = _defaultSkinsNo.Contains(skinNo.Value) ? skinNo.Value : 6;
                     skinId.Value = _skindId;
@@ -103,6 +121,7 @@ namespace NimbusMergerLibrary.Mergers
                 }
                 else if (!_gameSkinIds.Contains(skinId.Value))
                 {
+                    // Check if it's a skin no 1, 2, 3, 4, 5 and if it's already been assigned
                     if (_defaultSkinsNo.Contains(skinNo.Value) 
                         && _planeSkinDictionary[planeStringId.ToString()].SkinNo.Contains(skinNo.Value))
                     {
