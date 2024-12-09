@@ -109,24 +109,18 @@ namespace NimbusMergerGUI
             {
                 DialogResult = DialogResult.OK;
 
-                var filenames = Directory.GetFiles(ModsDir)
-                          .Select(Path.GetFileName); // Extract filenames only
-
-                int tildeCount = filenames.OrderByDescending(f => f)
-                    .LastOrDefault()
-                    .Count(c => c == '~');
-
-                ExportDir += "\\" + new string('~', tildeCount) + "export_P";
-
                 NimbusMerger nimbusMerger = new NimbusMerger(GameDir, ModsDir);
 
                 nimbusMerger.Initialize();
+
+                ExportDir += "\\" + new string('~', nimbusMerger.TildeCount) + "export\\" + "export_P";
 
                 nimbusMerger.MergeLocalization();
                 nimbusMerger.MergeDataTables();
 
                 nimbusMerger.WriteMergedLocalization(ExportDir);
                 nimbusMerger.WriteMergedDataTables(ExportDir);
+                nimbusMerger.WritePak(Directory.GetCurrentDirectory() + "\\" + "UnrealPak-Batch-No-Compression.bat", ExportDir);
 
                 Close();
             }
@@ -148,6 +142,7 @@ namespace NimbusMergerGUI
             if (Directory.Exists(GameDir + "\\~mods") && string.IsNullOrEmpty(LauncherTextBoxModsDir.Text))
             {
                 ModsDir = GameDir + "\\~mods";
+                ExportDir = GameDir + "\\~mods";
             }
         }
 
