@@ -170,7 +170,7 @@ namespace NimbusMergerLibrary.Mergers
             process.WaitForExit();
 
 #if !DEBUG
-            Directory.Delete(path);
+            Directory.Delete(path, true);
 #endif
         }
     }
