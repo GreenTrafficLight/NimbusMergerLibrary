@@ -12,6 +12,8 @@ namespace NimbusMergerLibrary.Mergers
 {
     public class DataTableMerger
     {
+        protected HashSet<string> RowNames = new HashSet<string>();
+
         protected UAsset _gameAsset = null;
         protected string _dataTablePath = string.Empty;
 
@@ -51,6 +53,22 @@ namespace NimbusMergerLibrary.Mergers
                         break;
                 }
             }
+        }
+
+        protected void RenameRow(StructPropertyData row)
+        {
+            if (RowNames.Contains(row.Name.ToString()))
+            {
+                int number = 1;
+                row.Name.Value.Value = "Row";
+                while (RowNames.Contains(row.Name.ToString()))
+                {
+                    //row.Name.Value = "Row";
+                    row.Name.Number = number + 1;
+                    number++;
+                }
+            }
+            RowNames.Add(row.Name.ToString());
         }
     }
 }
