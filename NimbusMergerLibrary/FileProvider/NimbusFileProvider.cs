@@ -166,6 +166,18 @@ namespace NimbusMergerLibrary.FileProvider
         {
             string assetPathName = reference.Value.AssetPath.AssetName.ToString();
             string assetPath = Path.GetDirectoryName(assetPathName) + "\\" + Path.GetFileNameWithoutExtension(assetPathName) + ".uasset";
+            if (CheckAsset(assetPath)) return true;
+            return false;
+        }
+
+        public bool CheckAssetReference(string assetPath)
+        {
+            if (CheckAsset(assetPath)) return true;
+            return false;
+        }
+
+        public bool CheckAsset(string assetPath)
+        {
             if (assetPath.StartsWith("\\Game"))
             {
                 string updatedPath = assetPath.Replace("\\Game", "Nimbus\\Content");
