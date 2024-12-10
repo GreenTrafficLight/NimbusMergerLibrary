@@ -1,4 +1,5 @@
-﻿using NimbusMergerLibrary.Mergers;
+﻿using Ace7LocalizationFormat.Enums;
+using NimbusMergerLibrary.Mergers;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -8,6 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace NimbusMergerGUI
 {
@@ -61,6 +63,31 @@ namespace NimbusMergerGUI
         {
             InitializeComponent();
 
+            var languageMapping = new Dictionary<eLanguage, string>
+            {
+                { eLanguage.ENGLISH, "English" },
+                { eLanguage.TRADITIONAL_CHINESE, "Traditional Chinese" },
+                { eLanguage.FRENCH, "French" },
+                { eLanguage.GERMAN, "German" },
+                { eLanguage.ITALIAN, "Italian" },
+                { eLanguage.JAPANESE, "Japanese" },
+                { eLanguage.KOREAN, "Korean" },
+                { eLanguage.EUROPEAN_SPANISH, "European Spanish" },
+                { eLanguage.LATIN_AMERICAN_SPANISH, "Latin American Spanish" },
+                { eLanguage.POLISH, "Polish" },
+                { eLanguage.BRAZILIAN_PORTUGUESE, "Brazilian Portuguese" },
+                { eLanguage.RUSSIAN, "Russian" },
+                { eLanguage.SIMPLIFIED_CHINESE, "Simplified Chinese" }
+            };
+
+            // Bind the dictionary to the ComboBox
+            LauncherComboBoxSelectedLanguage.DataSource = new BindingSource(languageMapping, null);
+            LauncherComboBoxSelectedLanguage.DisplayMember = "Value"; // Display the custom string
+            LauncherComboBoxSelectedLanguage.ValueMember = "Key";    // Store the enum value
+
+            // Optionally set default selection
+            LauncherComboBoxSelectedLanguage.SelectedValue = eLanguage.ENGLISH;
+
             ExportDir = Directory.GetCurrentDirectory();
         }
 
@@ -111,7 +138,7 @@ namespace NimbusMergerGUI
 
                 NimbusMerger nimbusMerger = new NimbusMerger(GameDir, ModsDir);
 
-                nimbusMerger.Initialize();
+                nimbusMerger.Initialize((eLanguage)LauncherComboBoxSelectedLanguage.SelectedValue);
 
                 ExportDir += "\\" + new string('~', nimbusMerger.TildeCount) + "export\\" + "export_P";
 

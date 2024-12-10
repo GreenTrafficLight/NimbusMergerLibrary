@@ -1,4 +1,5 @@
-﻿using Ace7LocalizationFormat.Formats;
+﻿using Ace7LocalizationFormat.Enums;
+using Ace7LocalizationFormat.Formats;
 using CUE4Parse.Compression;
 using CUE4Parse.Encryption.Aes;
 using CUE4Parse.UE4.Pak;
@@ -31,6 +32,7 @@ namespace NimbusMergerLibrary.Mergers
         private Dictionary<char, DatFile> _gameDats = new Dictionary<char, DatFile>();
 
         private int _tildeCount = 0;
+        private eLanguage _selectedLanguage = eLanguage.ENGLISH;
         public int TildeCount
         {
             get { return _tildeCount + 1; }
@@ -43,8 +45,10 @@ namespace NimbusMergerLibrary.Mergers
             _modArchivePath = modArchivePath;
         }
 
-        public void Initialize()
+        public void Initialize(eLanguage selectedLanguage = eLanguage.ENGLISH)
         {
+            _selectedLanguage = selectedLanguage;
+
             ZlibHelper.Initialize(Directory.GetCurrentDirectory() + "\\" + "zlib-ng2.dll");
 
             // Initialize Game Provider
@@ -111,7 +115,7 @@ namespace NimbusMergerLibrary.Mergers
             {
                 if (NimbusPakFileReader.TryGetUAsset(pak, "Nimbus/Content/Blueprint/Information/PlayerPlaneDataTable.uasset", out UAsset modPlayerPlaneDataTable))
                 {
-                    _playerPlaneDataTableMerger.Merge(_modProvider, modPlayerPlaneDataTable, _gameCmn, _gameDats['A']);
+                    _playerPlaneDataTableMerger.Merge(_modProvider, modPlayerPlaneDataTable, _gameCmn, _gameDats[(char)_selectedLanguage]);
                 }
 
                 if (NimbusPakFileReader.TryGetUAsset(pak, "Nimbus/Content/Blueprint/Information/SkinDataTable.uasset", out UAsset modSkinDataTable))

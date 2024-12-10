@@ -39,6 +39,8 @@
             LauncherButtonExportDir = new Button();
             LauncherButtonCancel = new Button();
             LauncherButtonOk = new Button();
+            LauncherComboBoxSelectedLanguage = new ComboBox();
+            LauncherLabelSelectedLanguage = new Label();
             SuspendLayout();
             // 
             // LauncherLabelGameDir
@@ -142,11 +144,30 @@
             LauncherButtonOk.UseVisualStyleBackColor = true;
             LauncherButtonOk.Click += LauncherButtonOk_Click;
             // 
+            // LauncherComboBoxSelectedLanguage
+            // 
+            LauncherComboBoxSelectedLanguage.FormattingEnabled = true;
+            LauncherComboBoxSelectedLanguage.Location = new Point(12, 167);
+            LauncherComboBoxSelectedLanguage.Name = "LauncherComboBoxSelectedLanguage";
+            LauncherComboBoxSelectedLanguage.Size = new Size(153, 23);
+            LauncherComboBoxSelectedLanguage.TabIndex = 11;
+            // 
+            // LauncherLabelSelectedLanguage
+            // 
+            LauncherLabelSelectedLanguage.AutoSize = true;
+            LauncherLabelSelectedLanguage.Location = new Point(12, 149);
+            LauncherLabelSelectedLanguage.Name = "LauncherLabelSelectedLanguage";
+            LauncherLabelSelectedLanguage.Size = new Size(112, 15);
+            LauncherLabelSelectedLanguage.TabIndex = 12;
+            LauncherLabelSelectedLanguage.Text = "Selected Language :";
+            // 
             // Launcher
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(589, 210);
+            Controls.Add(LauncherLabelSelectedLanguage);
+            Controls.Add(LauncherComboBoxSelectedLanguage);
             Controls.Add(LauncherButtonOk);
             Controls.Add(LauncherButtonCancel);
             Controls.Add(LauncherButtonExportDir);
@@ -177,5 +198,7 @@
         private Button LauncherButtonExportDir;
         private Button LauncherButtonCancel;
         private Button LauncherButtonOk;
+        private ComboBox LauncherComboBoxSelectedLanguage;
+        private Label LauncherLabelSelectedLanguage;
     }
 }
