@@ -46,12 +46,14 @@ namespace NimbusMergerLibrary.Mergers
 
             DataTableExport dataTable = (DataTableExport)gameAsset.Exports[0];
             UDataTable gameTable = dataTable.Table;
-            List<StructPropertyData> gameDatas = gameTable.Data;
+            List<StructPropertyData> gameRows = gameTable.Data;
+
+            _gameRowForCopy = gameRows[0];
 
             // Initialize the dictionary
-            for (int i = 0; i < gameDatas.Count; i++)
+            for (int i = 0; i < gameRows.Count; i++)
             {
-                StructPropertyData row = gameDatas[i];
+                StructPropertyData row = gameRows[i];
 
                 IntPropertyData skinId = (IntPropertyData)row["SkinID"];
                 IntPropertyData skinNo = (IntPropertyData)row["SkinNo"];
@@ -69,6 +71,8 @@ namespace NimbusMergerLibrary.Mergers
                 {
                     _skindId += 100;
                 }
+
+                RowNames.Add(row.Name.ToString());
             }
 
             _exportSkinIds = new HashSet<int>(_gameSkinIds);
@@ -90,13 +94,13 @@ namespace NimbusMergerLibrary.Mergers
 
             for (int i = 0; i < modDatas.Count; i++)
             {
-                StructPropertyData modData = modDatas[i];
+                StructPropertyData modRow = modDatas[i];
 
-                IntPropertyData skinId = (IntPropertyData)modData["SkinID"];
-                IntPropertyData skinNo = (IntPropertyData)modData["SkinNo"];
-                IntPropertyData sortNumber = (IntPropertyData)modData["SortNumber"];
-                StrPropertyData planeStringId = (StrPropertyData)modData["PlaneStringID"];
-                StrPropertyData planeReference = (StrPropertyData)modData["PlaneReference"];
+                IntPropertyData skinId = (IntPropertyData)modRow["SkinID"];
+                IntPropertyData skinNo = (IntPropertyData)modRow["SkinNo"];
+                IntPropertyData sortNumber = (IntPropertyData)modRow["SortNumber"];
+                StrPropertyData planeStringId = (StrPropertyData)modRow["PlaneStringID"];
+                StrPropertyData planeReference = (StrPropertyData)modRow["PlaneReference"];
 
                 // If the new plane hasn't been added in the dictionary
                 if (!_planeSkinDictionary.ContainsKey(planeStringId.ToString()))
@@ -114,8 +118,9 @@ namespace NimbusMergerLibrary.Mergers
                     _planeSkinDictionary[planeStringId.ToString()].SkinNo.Add(skinNo.Value);
                     _exportSkinIds.Add(skinId.Value);
 
-                    modData.Name.Number = skinId.Value + 1; // Change row name
-                    gameDatas.Add(modData);
+                    StructPropertyData outputRow = PrepareModifiedRow(modRow);
+
+                    gameDatas.Add(outputRow);
 
                     _skindId += 100;
                 }
@@ -132,9 +137,9 @@ namespace NimbusMergerLibrary.Mergers
                     _planeSkinDictionary[planeStringId.ToString()].SkinNo.Add(skinNo.Value);
                     _exportSkinIds.Add(skinId.Value);
 
-                    modData.Name.Number = skinId.Value + 1; // Change row name
+                    StructPropertyData outputRow = PrepareModifiedRow(modRow);
 
-                    gameDatas.Add(modData);
+                    gameDatas.Add(outputRow);
                 }
             }
         }

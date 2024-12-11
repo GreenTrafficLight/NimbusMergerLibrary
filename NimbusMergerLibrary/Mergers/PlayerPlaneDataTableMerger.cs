@@ -70,8 +70,6 @@ namespace NimbusMergerLibrary.Mergers
         private int _addPlaneId = 100;
         /// <summary>The mininum sort Number found the PlayerPlaneDataTable.</summary>
         private int _addSortNumber = 1;
-
-        private StructPropertyData _gameRowForCopy = null;
         
 
         public PlayerPlaneDataTableMerger(UAsset gameAsset, CmnFile cmn, DatFile dat)
@@ -87,30 +85,32 @@ namespace NimbusMergerLibrary.Mergers
 
             for (int i = 0; i < gameRows.Count; i++)
             {
-                StructPropertyData data = gameRows[i];
+                StructPropertyData row = gameRows[i];
 
                 // Add the game plane IDs
-                IntPropertyData planeId = (IntPropertyData)data["PlaneID"];
+                IntPropertyData planeId = (IntPropertyData)row["PlaneID"];
                 _gamePlaneIDs.Add(planeId.Value);
                 // Increment the id for the new plane, so it's doesn't take one that exist
                 if (_gamePlaneIDs.Contains(_addPlaneId)) _addPlaneId++;
 
                 // Get the reference to the AcePlayerPawn of the plane
                 // Used to see if there any duplicates, if there is, continue the loop
-                SoftObjectPropertyData reference = (SoftObjectPropertyData)data["Reference"];
+                SoftObjectPropertyData reference = (SoftObjectPropertyData)row["Reference"];
                 string assetPath = Path.GetFileNameWithoutExtension(reference.Value.AssetPath.AssetName.ToString());
                 _gamePlaneReferences.Add(assetPath);
 
                 // Add the game sort numbers
-                IntPropertyData sortNumber = (IntPropertyData)data["SortNumber"];
+                IntPropertyData sortNumber = (IntPropertyData)row["SortNumber"];
                 _exportSortNumbers.Add(sortNumber.Value);
 
                 // Add the game plane string IDs
-                StrPropertyData planeStringID = (StrPropertyData)data["PlaneStringID"];
+                StrPropertyData planeStringID = (StrPropertyData)row["PlaneStringID"];
                 string planeString = GetPlaneString(planeStringID, cmn, dat);
                 _planeStringsDict.Add(planeId.Value, planeString);
 
                 _planeReferences.Add(assetPath, new ReferenceDictionary(planeId.Value, sortNumber.Value, i));
+
+                RowNames.Add(row.Name.ToString());
             }
 
             _exportSortNumbers.Add(41);
@@ -168,14 +168,9 @@ namespace NimbusMergerLibrary.Mergers
             // Add the new asseth path name to the name map
             string assetPathName = reference.Value.AssetPath.AssetName.ToString();
             // Fix the reference to point to the asseth path name
-            reference.Value = new FSoftObjectPath(new FTopLevelAssetPath(null, new FName(_gameAsset, assetPathName)), null); 
-            
-            // Copy the first row of the game asset
-            StructPropertyData outputRow = (StructPropertyData)_gameRowForCopy.Clone();
-            // Write the mod row to the copied row
-            CopyRow(modRow, outputRow);
-            // Change row name
-            outputRow.Name.Number = planeId.Value + 1; 
+            reference.Value = new FSoftObjectPath(new FTopLevelAssetPath(null, new FName(_gameAsset, assetPathName)), null);
+
+            StructPropertyData outputRow = PrepareModifiedRow(modRow);
 
             // Add that the plane has been added to the table
             string assetPath = Path.GetFileNameWithoutExtension(reference.Value.AssetPath.AssetName.ToString());
@@ -268,6 +263,7 @@ namespace NimbusMergerLibrary.Mergers
             if (cmn != null && dat != null)
             {
                 var stringNumber = cmn[$"AircraftShort_Name_{planeStringID}"]; // Get the plane string
+                if (stringNumber == -1) throw new Exception($"Couldn't find the string of AircraftShort_Name_{planeStringID}");
                 planeString = dat.Strings[stringNumber].Trim('\0'); // Remove the "\0" at the end of the string
                 if (!_planeStrings.Contains(planeString))
                 {

@@ -8,6 +8,7 @@ using UAssetAPI.PropertyTypes.Objects;
 using UAssetAPI.PropertyTypes.Structs;
 using UAssetAPI;
 using System.Numerics;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace NimbusMergerLibrary.Mergers
 {
@@ -25,24 +26,28 @@ namespace NimbusMergerLibrary.Mergers
 
             DataTableExport dataTable = (DataTableExport)gameAsset.Exports[0];
             UDataTable gameTable = dataTable.Table;
-            List<StructPropertyData> gameDatas = gameTable.Data;
+            List<StructPropertyData> gameRows = gameTable.Data;
+
+            _gameRowForCopy = gameRows[0];
 
             // Initialize the dictionary
-            foreach (StructPropertyData data in gameDatas)
+            foreach (StructPropertyData row in gameRows)
             {
-                IntPropertyData aircraftViewerID = (IntPropertyData)data["AircraftViewerID"];
+                IntPropertyData aircraftViewerID = (IntPropertyData)row["AircraftViewerID"];
                 _gameAircraftViewerIDs.Add(aircraftViewerID.Value);
                 if (_gameAircraftViewerIDs.Contains(_addAircraftViewerID)){
                     _addAircraftViewerID++;
                 }
+
+                RowNames.Add(row.Name.ToString());
             }
 
             _exportAircraftViewerIDs = new HashSet<int>(_gameAircraftViewerIDs);
         }
 
-        public void AddRow(StructPropertyData modData, List<StructPropertyData> gameDatas)
+        public void AddRow(StructPropertyData modRow, List<StructPropertyData> gameDatas)
         {
-            IntPropertyData aircraftViewerID = (IntPropertyData)modData["AircraftViewerID"];
+            IntPropertyData aircraftViewerID = (IntPropertyData)modRow["AircraftViewerID"];
 
             // Update the added id value until it's not in the list
             while (_exportAircraftViewerIDs.Contains(_addAircraftViewerID))
@@ -53,9 +58,9 @@ namespace NimbusMergerLibrary.Mergers
             aircraftViewerID.Value = _addAircraftViewerID; // Update the PlaneID
             _exportAircraftViewerIDs.Add(_addAircraftViewerID); // Add the PlaneID to the list so it can't be re-used again
 
-            modData.Name.Number = aircraftViewerID.Value + 1; // Change row name
-            
-            gameDatas.Add(modData); // Add the table
+            StructPropertyData outputRow = PrepareModifiedRow(modRow);
+
+            gameDatas.Add(outputRow); // Add the table
         }
 
         public void Merge(UAsset modAsset)

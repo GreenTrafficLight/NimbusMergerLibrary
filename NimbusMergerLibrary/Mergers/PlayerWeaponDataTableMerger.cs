@@ -21,8 +21,6 @@ namespace NimbusMergerLibrary.Mergers
 
         private int _addWeaponID = 0;
 
-        private StructPropertyData _rowForCopy = null;
-
 
         public PlayerWeaponDataTableMerger(UAsset gameAsset)
         {
@@ -31,15 +29,15 @@ namespace NimbusMergerLibrary.Mergers
 
             DataTableExport dataTable = (DataTableExport)gameAsset.Exports[0];
             UDataTable gameTable = dataTable.Table;
-            List<StructPropertyData> gameDatas = gameTable.Data;
+            List<StructPropertyData> gameRows = gameTable.Data;
 
-            _rowForCopy = gameDatas[0];
+            _gameRowForCopy = gameRows[0];
 
             // Initialize the dictionary
-            foreach (StructPropertyData data in gameDatas)
+            foreach (StructPropertyData row in gameRows)
             {
                 // Add the game plane IDs
-                IntPropertyData planeId = (IntPropertyData)data["WeaponID"];
+                IntPropertyData planeId = (IntPropertyData)row["WeaponID"];
                 _gameWeaponIDs.Add(planeId.Value);
                 // Increment the id for the new plane, so it's doesn't take one that exist
                 if (_gameWeaponIDs.Contains(_addWeaponID))
@@ -47,7 +45,7 @@ namespace NimbusMergerLibrary.Mergers
                     _addWeaponID++;
                 }
 
-                RowNames.Add(data.Name.ToString());
+                RowNames.Add(row.Name.ToString());
             }
 
             _exportWeaponIDs = new HashSet<int>(_gameWeaponIDs);
@@ -63,11 +61,11 @@ namespace NimbusMergerLibrary.Mergers
 
             DataTableExport modDataTable = (DataTableExport)modAsset.Exports[0];
             UDataTable modTable = modDataTable.Table;
-            List<StructPropertyData> modDatas = modTable.Data;
+            List<StructPropertyData> modRows = modTable.Data;
 
-            for (int i = 0; i < modDatas.Count; i++)
+            for (int i = 0; i < modRows.Count; i++)
             {
-                StructPropertyData modRow = modDatas[i];
+                StructPropertyData modRow = modRows[i];
 
                 IntPropertyData weaponID = (IntPropertyData)modRow["WeaponID"];
 
@@ -82,10 +80,7 @@ namespace NimbusMergerLibrary.Mergers
                     weaponID.Value = _addWeaponID;
                     _exportWeaponIDs.Add(weaponID.Value);
 
-                    // Copy the first row of the game asset
-                    StructPropertyData outputRow = (StructPropertyData)_rowForCopy.Clone();
-                    CopyRow(modRow, outputRow);
-                    RenameRow(outputRow); // Change row name
+                    StructPropertyData outputRow = PrepareModifiedRow(modRow);
 
                     gameRows.Add(outputRow); // Add the table
                 }
