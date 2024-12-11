@@ -19,7 +19,7 @@ namespace NimbusMergerLibrary.Mergers
                 if (gameMaxStringNumber < parent[key].StringNumber)
                 {
                     // Add it to the Cmn that is going to be exported
-                    if (exportCmn.AddVariable(parent[key].Name, exportCmn.Root))
+                    if (exportCmn.AddVariable(parent[key], exportCmn.Root))
                     {
                         // Iterate through each localization contained in the game
                         foreach (char letter in exportDats.Keys)
