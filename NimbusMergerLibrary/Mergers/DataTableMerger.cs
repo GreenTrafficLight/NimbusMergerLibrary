@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using UAssetAPI;
 using UAssetAPI.PropertyTypes.Objects;
 using UAssetAPI.PropertyTypes.Structs;
+using UAssetAPI.UnrealTypes;
 
 namespace NimbusMergerLibrary.Mergers
 {
@@ -16,6 +17,7 @@ namespace NimbusMergerLibrary.Mergers
 
         protected UAsset _gameAsset = null;
         protected string _dataTablePath = string.Empty;
+        protected StructPropertyData _gameRowForCopy = null;
 
         public void Write(string path)
         {
@@ -59,8 +61,10 @@ namespace NimbusMergerLibrary.Mergers
         {
             if (RowNames.Contains(row.Name.ToString()))
             {
+                int saveRowNumber = row.Name.Number;
+                row.Name = new FName(_gameAsset, _gameAsset.SearchNameReference(new FString("Row")));
+                row.Name.Number = saveRowNumber;
                 int number = 1;
-                row.Name.Value.Value = "Row";
                 while (RowNames.Contains(row.Name.ToString()))
                 {
                     //row.Name.Value = "Row";
@@ -69,6 +73,22 @@ namespace NimbusMergerLibrary.Mergers
                 }
             }
             RowNames.Add(row.Name.ToString());
+        }
+
+        protected StructPropertyData PrepareModifiedRow(StructPropertyData modRow) 
+        {
+            if (!RowNames.Any()) throw new Exception("Row names is empty");
+
+            if (_gameRowForCopy == null) throw new Exception("No assigned game row for copy");
+
+            // Copy the first row of the game asset
+            StructPropertyData outputRow = (StructPropertyData)_gameRowForCopy.Clone();
+            // Write the mod row to the copied row
+            CopyRow(modRow, outputRow);
+            // Change row name
+            RenameRow(outputRow);
+
+            return outputRow;
         }
     }
 }
