@@ -58,7 +58,7 @@ namespace NimbusMergerLibrary.Mergers
             aircraftViewerID.Value = _addAircraftViewerID; // Update the PlaneID
             _exportAircraftViewerIDs.Add(_addAircraftViewerID); // Add the PlaneID to the list so it can't be re-used again
 
-            StructPropertyData outputRow = PrepareModifiedRow(modRow);
+            StructPropertyData outputRow = PrepareAddingRow(modRow, aircraftViewerID.Value);
 
             gameDatas.Add(outputRow); // Add the table
         }

@@ -57,14 +57,13 @@ namespace NimbusMergerLibrary.Mergers
             }
         }
 
-        protected void RenameRow(StructPropertyData row)
+        protected void RenameRow(StructPropertyData row, int number = 1)
         {
             if (RowNames.Contains(row.Name.ToString()))
             {
                 int saveRowNumber = row.Name.Number;
                 row.Name = new FName(_gameAsset, _gameAsset.SearchNameReference(new FString("Row")));
                 row.Name.Number = saveRowNumber;
-                int number = 1;
                 while (RowNames.Contains(row.Name.ToString()))
                 {
                     //row.Name.Value = "Row";
@@ -75,7 +74,7 @@ namespace NimbusMergerLibrary.Mergers
             RowNames.Add(row.Name.ToString());
         }
 
-        protected StructPropertyData PrepareModifiedRow(StructPropertyData modRow) 
+        protected StructPropertyData PrepareAddingRow(StructPropertyData modRow, int number = 1) 
         {
             if (!RowNames.Any()) throw new Exception("Row names is empty");
 
@@ -86,7 +85,7 @@ namespace NimbusMergerLibrary.Mergers
             // Write the mod row to the copied row
             CopyRow(modRow, outputRow);
             // Change row name
-            RenameRow(outputRow);
+            RenameRow(outputRow, number);
 
             return outputRow;
         }

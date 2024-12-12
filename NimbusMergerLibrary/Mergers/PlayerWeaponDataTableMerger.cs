@@ -80,7 +80,7 @@ namespace NimbusMergerLibrary.Mergers
                     weaponID.Value = _addWeaponID;
                     _exportWeaponIDs.Add(weaponID.Value);
 
-                    StructPropertyData outputRow = PrepareModifiedRow(modRow);
+                    StructPropertyData outputRow = PrepareAddingRow(modRow);
 
                     gameRows.Add(outputRow); // Add the table
                 }

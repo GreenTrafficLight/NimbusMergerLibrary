@@ -118,7 +118,7 @@ namespace NimbusMergerLibrary.Mergers
                     _planeSkinDictionary[planeStringId.ToString()].SkinNo.Add(skinNo.Value);
                     _exportSkinIds.Add(skinId.Value);
 
-                    StructPropertyData outputRow = PrepareModifiedRow(modRow);
+                    StructPropertyData outputRow = PrepareAddingRow(modRow, skinId.Value);
 
                     gameDatas.Add(outputRow);
 
@@ -137,7 +137,7 @@ namespace NimbusMergerLibrary.Mergers
                     _planeSkinDictionary[planeStringId.ToString()].SkinNo.Add(skinNo.Value);
                     _exportSkinIds.Add(skinId.Value);
 
-                    StructPropertyData outputRow = PrepareModifiedRow(modRow);
+                    StructPropertyData outputRow = PrepareAddingRow(modRow, skinId.Value);
 
                     gameDatas.Add(outputRow);
                 }
