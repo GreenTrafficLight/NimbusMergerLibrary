@@ -14,6 +14,7 @@ using System.IO;
 using Ace7LocalizationFormat.Enums;
 using UAssetAPI.PropertyTypes.Objects;
 using CUE4Parse.FileProvider;
+using CUE4Parse.Encryption.Aes;
 
 namespace NimbusMergerLibrary.FileProvider
 {
