@@ -27,5 +27,60 @@ namespace NimbusMergerLibrary.Utils
         {
             property.StructType = new FName(asset, asset.SearchNameReference(property.StructType.Value));
         }
+
+        public static void CopyRow(INameMap asset, StructPropertyData copiedRow, StructPropertyData outputRow)
+        {
+            foreach (PropertyData column in copiedRow.Value)
+            {
+                string columnName = column.Name.ToString();
+
+                outputRow[columnName] = copiedRow[columnName];
+                switch (column.PropertyType.ToString())
+                {
+                    case "ByteProperty":
+                        FixPropertyReference((BytePropertyData)outputRow[columnName], asset);
+                        break;
+
+                    case "EnumProperty":
+                        FixPropertyReference((EnumPropertyData)outputRow[columnName], asset);
+                        break;
+
+                    case "StructProperty":
+                        FixPropertyReference((StructPropertyData)outputRow[columnName], asset);
+                        break;
+
+                    default:
+                        break;
+                }
+            }
+        }
+
+        public static void CopyRowAccurate(INameMap asset, StructPropertyData copiedRow, StructPropertyData outputRow)
+        {
+            if (copiedRow.Value.Count != outputRow.Value.Count) throw new Exception("Missing columns");
+
+            for (int i = 0; i < copiedRow.Value.Count; i++)
+            {
+                PropertyData column = copiedRow.Value[i];
+                outputRow.Value[i] = column;
+                switch (column.PropertyType.ToString())
+                {
+                    case "ByteProperty":
+                        FixPropertyReference((BytePropertyData)outputRow.Value[i], asset);
+                        break;
+
+                    case "EnumProperty":
+                        FixPropertyReference((EnumPropertyData)outputRow.Value[i], asset);
+                        break;
+
+                    case "StructProperty":
+                        FixPropertyReference((StructPropertyData)outputRow.Value[i], asset);
+                        break;
+
+                    default:
+                        break;
+                }
+            }
+        }
     }
 }
