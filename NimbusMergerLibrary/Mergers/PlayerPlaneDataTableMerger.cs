@@ -29,8 +29,18 @@ namespace NimbusMergerLibrary.Mergers
             RowIndex = rowIndex;
         }
 
+        /// <summary>
+        /// The plane ID in the plane row
+        /// </summary>
         public int PlaneID { get; set; }
+        /// <summary>
+        /// The sort number in the plane row
+        /// </summary>
         public int SortNumber { get; set; }
+
+        /// <summary>
+        /// The index of the plane row in the data table rows
+        /// </summary>
         public int RowIndex { get; set; }
     }
 
@@ -108,6 +118,7 @@ namespace NimbusMergerLibrary.Mergers
                 // Add the game plane string IDs
                 StrPropertyData planeStringID = (StrPropertyData)row["PlaneStringID"];
                 _gamePlaneStrings.Add(planeStringID.ToString());
+                // GEt the plane short name to for the sorting later
                 string planeString = GetPlaneString(planeStringID, cmn, dat);
                 _planeStringsDict.Add(planeId.Value, planeString);
 
@@ -119,20 +130,26 @@ namespace NimbusMergerLibrary.Mergers
             _exportSortNumbers.Add(41);
             _exportPlaneIDs = new HashSet<int>(_gamePlaneIDs);
         }
+
+        /// <summary>
+        /// Sort the plane alphabetically
+        /// </summary>
         private void Sort()
         {
             DataTableExport dataTable = (DataTableExport)_gameAsset.Exports[0];
             UDataTable gameTable = dataTable.Table;
             List<StructPropertyData> gameColumns = gameTable.Data;
 
+            // For each row in the export data table
             for (int rowIndex = 0; rowIndex < gameColumns.Count; rowIndex++)
             {
                 StructPropertyData data = gameColumns[rowIndex];
 
+                // Get the string from the dictionary
                 IntPropertyData planeId = (IntPropertyData)data["PlaneID"];
-
                 string planeString = _planeStringsDict[planeId.Value];
 
+                // Update the alphabeticalSortNumber
                 IntPropertyData alphabeticalSortNumber = (IntPropertyData)data["AlphabeticalSortNumber"];
                 alphabeticalSortNumber.Value = _planeStrings.IndexOf(planeString) + 1; // It's start at 1 and not 0;
             }
