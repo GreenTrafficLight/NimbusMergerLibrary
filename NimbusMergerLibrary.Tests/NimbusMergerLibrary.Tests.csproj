@@ -11,4 +11,8 @@
     <ProjectReference Include="..\NimbusMergerLibrary\NimbusMergerLibrary.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="NimbusScript\Core\" />
+  </ItemGroup>
+
 </Project>
