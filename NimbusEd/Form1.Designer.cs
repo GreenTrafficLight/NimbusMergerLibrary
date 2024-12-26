@@ -44,7 +44,7 @@
             MenuStrip.Items.AddRange(new ToolStripItem[] { MenuStripFile });
             MenuStrip.Location = new Point(0, 0);
             MenuStrip.Name = "MenuStrip";
-            MenuStrip.Size = new Size(800, 24);
+            MenuStrip.Size = new Size(892, 24);
             MenuStrip.TabIndex = 0;
             MenuStrip.Text = "menuStrip1";
             // 
@@ -58,41 +58,42 @@
             // MSFileOpen
             // 
             MSFileOpen.Name = "MSFileOpen";
-            MSFileOpen.Size = new Size(180, 22);
+            MSFileOpen.Size = new Size(103, 22);
             MSFileOpen.Text = "Open";
             MSFileOpen.Click += MSFileOpen_Click;
             // 
             // MSFileSave
             // 
             MSFileSave.Name = "MSFileSave";
-            MSFileSave.Size = new Size(180, 22);
+            MSFileSave.Size = new Size(103, 22);
             MSFileSave.Text = "Save";
             // 
             // toolStripSeparator1
             // 
             toolStripSeparator1.Name = "toolStripSeparator1";
-            toolStripSeparator1.Size = new Size(177, 6);
+            toolStripSeparator1.Size = new Size(100, 6);
             // 
             // MSFileExit
             // 
             MSFileExit.Name = "MSFileExit";
-            MSFileExit.Size = new Size(180, 22);
+            MSFileExit.Size = new Size(103, 22);
             MSFileExit.Text = "Exit";
             // 
             // DataTablesTreeView
             // 
             DataTablesTreeView.Location = new Point(12, 27);
             DataTablesTreeView.Name = "DataTablesTreeView";
-            DataTablesTreeView.Size = new Size(242, 411);
+            DataTablesTreeView.Size = new Size(242, 481);
             DataTablesTreeView.TabIndex = 1;
             DataTablesTreeView.AfterSelect += DataTablesTreeView_AfterSelect;
             // 
             // propertyGrid1
             // 
+            propertyGrid1.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             propertyGrid1.HelpVisible = false;
             propertyGrid1.Location = new Point(260, 27);
             propertyGrid1.Name = "propertyGrid1";
-            propertyGrid1.Size = new Size(528, 301);
+            propertyGrid1.Size = new Size(620, 316);
             propertyGrid1.TabIndex = 2;
             propertyGrid1.ToolbarVisible = false;
             // 
@@ -100,7 +101,7 @@
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(800, 450);
+            ClientSize = new Size(892, 520);
             Controls.Add(propertyGrid1);
             Controls.Add(DataTablesTreeView);
             Controls.Add(MenuStrip);

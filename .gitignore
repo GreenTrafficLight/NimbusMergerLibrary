@@ -363,3 +363,4 @@ MigrationBackup/
 FodyWeavers.xsd
 /NimbusMergerLibrary.Tests/Engine
 /NimbusMergerGUI/Engine
+/NimbusMergerLibrary/Engine
