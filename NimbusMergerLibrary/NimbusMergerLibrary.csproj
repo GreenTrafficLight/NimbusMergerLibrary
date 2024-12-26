@@ -12,4 +12,8 @@
     <ProjectReference Include="..\Modules\UAssetAPI\UAssetAPI\UAssetAPI.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="NimbusScript\Core\" />
+  </ItemGroup>
+
 </Project>
